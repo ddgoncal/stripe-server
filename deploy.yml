@@ -1,0 +1,33 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches:
+      - main # or master, depending on your branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH Client
+        run: sudo apt-get update && sudo apt-get install -y openssh-client
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${{ secrets.LIGHTSAIL_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to Lightsail
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_IP }}  << EOF
+              cd <YOUR_REPO_NAME> # Replace with your project's directory on lightsail
+              git pull origin main # or master
+              npm install
+              pm2 restart <your_app_name> # Replace with the name you are using in pm2
+              exit
+          EOF
