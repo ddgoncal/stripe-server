@@ -6,6 +6,7 @@ import { paymentRoutes } from './routes/payment.routes.js';
 import { textGenerationRoutes } from './routes/textGeneration.routes.js';
 import { testRoutes } from './routes/test.routes.js';
 import { handleError } from './utils/error.utils.js';
+import { parseCorsOrigins } from './utils/utils.js';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:5173'],
+  origin: parseCorsOrigins(),
   methods: ['GET', 'POST', 'PUT', 'HEAD'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
