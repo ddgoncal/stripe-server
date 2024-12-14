@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { paymentRoutes } from './routes/payment.routes.js';
+import { textGenerationRoutes } from './routes/textGeneration.routes.js';
 import { testRoutes } from './routes/test.routes.js';
 import { handleError } from './utils/error.utils.js';
 
@@ -22,6 +23,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/payments', paymentRoutes);
+app.use('/api/text', textGenerationRoutes);
 app.use('/api/test', testRoutes);
 
 // Health check endpoint
