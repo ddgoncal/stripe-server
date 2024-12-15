@@ -24,7 +24,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/payments', paymentRoutes);
-app.use('/api/text', textGenerationRoutes);
+app.use('/api/generator', textGenerationRoutes);
 app.use('/api/test', testRoutes);
 
 // Health check endpoint
