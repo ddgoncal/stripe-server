@@ -7,6 +7,7 @@ import { textGenerationRoutes } from './routes/textGeneration.routes.js';
 import { testRoutes } from './routes/test.routes.js';
 import { handleError } from './utils/error.utils.js';
 import { parseCorsOrigins } from './utils/utils.js';
+import pool from './db/connection.js';
 
 dotenv.config();
 
@@ -44,3 +45,13 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// Initialize database connection
+/* pool.connect((err) => {
+  if (err) {
+    console.error('Database connection failed:', err.stack);
+  } else {
+    console.log('Connected to the database');
+  }
+});
+ */
