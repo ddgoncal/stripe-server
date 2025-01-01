@@ -24,7 +24,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.LIGHTSAIL_IP }} # Your Lightsail IP
-          username: ubuntu # or your username
+          username: bitnami # or your username
           key: ${{ secrets.LIGHTSAIL_PRIVATE_KEY }} # Your private key
           script: |
             cd stripe-server/ # Adjust to your app directory
