@@ -12,22 +12,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install SSH Client
-        run: sudo apt-get update && sudo apt-get install -y openssh-client
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # or your Node.js version
 
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" | base64 -d > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.LIGHTSAIL_IP }} >> ~/.ssh/known_hosts
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: Deploy to Lightsail
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_IP }}  << EOF
-              cd <YOUR_REPO_NAME> # Replace with your project's directory on lightsail
-              git pull origin main # or master
+     - name: SSH Deploy
+        uses: appleboy/ssh-action@master
+        with:
+           host: ${{ secrets.LIGHTSAIL_IP }} # Your Lightsail IP
+           username: ubuntu # or your username
+           key: ${{ secrets.LIGHTSAIL_PRIVATE_KEY }} #  Your private key
+           script: |
+              cd stripe-server/ # Adjust to your app directory
+              pm2 stop stripe-server
+              git pull origin main
               npm install
-              pm2 restart <your_app_name> # Replace with the name you are using in pm2
-              exit
-          EOF
+              pm2 start stripe-server
+              sudo systemctl restart nginx

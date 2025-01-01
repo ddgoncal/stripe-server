@@ -4,6 +4,32 @@ import { stripe } from '../utils/stripe.utils.js';
 
 dotenv.config();
 
+ // Route to handle creating a Checkout Session
+ export const createCheckoutSession = async (req, res) => {
+  try {
+    const { amount, currency } = req.body; // Get line items from request body
+
+    console.log(process.env.STRIPE_SUBSCRIPTION_PRICE_ID);
+    const line_items = [{
+      price: process.env.STRIPE_SUBSCRIPTION_PRICE_ID,
+      quantity: 1,
+    }];
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: line_items,
+      mode: 'subscription',
+      success_url: `${process.env.DOMAIN}/success?session_id={CHECKOUT_SESSION_ID}`, // Your success page URL
+      cancel_url: `${process.env.DOMAIN}`, // Your cancel page URL
+    });
+    console.log(session);
+    res.json({ url: session.url }); // send the generated URL to frontend
+  } catch (error) {
+       console.error('Error creating Checkout Session:', error);
+      res.status(500).json({ error: 'Error creating Checkout Session' });
+  }
+};
+
 export const createPaymentIntent = async (req, res) => {
   try {
     const { amount, currency = 'usd' } = req.body;
@@ -15,6 +41,7 @@ export const createPaymentIntent = async (req, res) => {
 
     res.status(200).json({
       clientSecret: paymentIntent.client_secret,
+      checkoutStripeUrl: process.env.STRIPE_CHECKOUT_URL,
     });
   } catch (error) {
     console.error('Error creating payment intent:', error);

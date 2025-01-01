@@ -1,8 +1,9 @@
 import express from 'express';
-import { generateText } from '../controllers/textGeneration.controller.js';
+import { generateText, generateGeminiAPICall } from '../controllers/textGeneration.controller.js';
 
 const router = express.Router();
 
 router.post('/generate-text', generateText);
+router.get('/generate-gemini', generateGeminiAPICall);
 
 export { router as textGenerationRoutes };

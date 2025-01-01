@@ -15,12 +15,12 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors({
+/* app.use(cors({
   origin: parseCorsOrigins(),
   methods: ['GET', 'POST', 'PUT', 'HEAD'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.options("*",cors());
+app.options("*",cors()); */
 app.use(express.json());
 
 // Routes
